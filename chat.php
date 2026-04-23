@@ -1,13 +1,13 @@
 <?php
 session_start();
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/functions.php';
+
+priprav_session_spravy();
 
 if (isset($_GET['action']) && $_GET['action'] === 'reset') {
     $_SESSION['messages'] = [
-        [
-            'role' => 'assistant',
-            'text' => 'Ahoj, som tvoj AI asistent. Napis mi, s cim ti mam pomoct.'
-        ]
+        predvolena_sprava_asistenta()
     ];
 
     header('Location: index.php');
@@ -19,37 +19,27 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$message = trim((string) ($_POST['message'] ?? ''));
+$sprava = trim((string) ($_POST['message'] ?? ''));
 
-if ($message === '') {
+if ($sprava === '') {
     header('Location: index.php');
     exit;
 }
 
-if (!isset($_SESSION['messages']) || !is_array($_SESSION['messages'])) {
-    $_SESSION['messages'] = [];
-}
-
 $_SESSION['messages'][] = [
     'role' => 'user',
-    'text' => mb_substr($message, 0, 1200)
+    'text' => skrat_spravu($sprava, 1200)
 ];
 
-$assistantReply = "Rozumiem. Toto je pripravene UI + session workflow.";
-
 if (OPENAI_API_KEY === '') {
-    $assistantReply .= "\n\nOpenAI API kluc zatial nie je nastaveny."
-        . " Nastav premennu OPENAI_API_KEY a potom sem doplnime realne API volanie.";
+    $odpoved = 'Spravu som prijal. Toto je lahka demo verzia bez realneho AI backendu.';
 } else {
-    $assistantReply .= "\n\nOpenAI API kluc je nacitany."
-        . " Aplikacia je pripravena na realne napojenie OpenAI API.";
+    $odpoved = 'Spravu som prijal. OpenAI kluc je pripraveny, ale volanie API tu este nie je zapnute.';
 }
-
-$assistantReply .= "\n\nTvoja posledna sprava: \"" . mb_substr($message, 0, 240) . "\"";
 
 $_SESSION['messages'][] = [
     'role' => 'assistant',
-    'text' => $assistantReply
+    'text' => $odpoved
 ];
 
 if (count($_SESSION['messages']) > 40) {
