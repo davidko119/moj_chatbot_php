@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/config.php';
 
 if (isset($_GET['action']) && $_GET['action'] === 'reset') {
     $_SESSION['messages'] = [
@@ -34,7 +35,17 @@ $_SESSION['messages'][] = [
     'text' => mb_substr($message, 0, 1200)
 ];
 
-$assistantReply = "Rozumiem. Toto je pripravene UI + session workflow. Dalsi krok je napojit realny AI backend.\n\nTvoja posledna sprava: \"" . mb_substr($message, 0, 240) . "\"";
+$assistantReply = "Rozumiem. Toto je pripravene UI + session workflow.";
+
+if (OPENAI_API_KEY === '') {
+    $assistantReply .= "\n\nOpenAI API kluc zatial nie je nastaveny."
+        . " Nastav premennu OPENAI_API_KEY a potom sem doplnime realne API volanie.";
+} else {
+    $assistantReply .= "\n\nOpenAI API kluc je nacitany."
+        . " Aplikacia je pripravena na realne napojenie OpenAI API.";
+}
+
+$assistantReply .= "\n\nTvoja posledna sprava: \"" . mb_substr($message, 0, 240) . "\"";
 
 $_SESSION['messages'][] = [
     'role' => 'assistant',

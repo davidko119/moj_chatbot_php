@@ -40,6 +40,18 @@ Projekt je navrhnuty ako lahky zaklad pre chatbot aplikaciu:
 3. Otvor v prehliadaci:
    - `http://localhost/my_database/moj_chatbot_php/`
 
+## Jednoducha priprava na OpenAI API kluc
+
+Projekt uz cita kluc z premennej prostredia `OPENAI_API_KEY` (v `config.php`).
+
+PowerShell (Windows):
+
+```powershell
+setx OPENAI_API_KEY "sk-...tvoj_realny_kluc..."
+```
+
+Potom zavri a znovu otvor terminal/server, aby sa nova premenna nacitala.
+
 ## Poznamky k dalsiemu rozvoju
 
 - napojit realny AI backend (OpenAI/ine API)
