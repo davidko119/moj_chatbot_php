@@ -9,7 +9,7 @@ function predvolena_sprava_asistenta(): array
 {
 	return [
 		'role' => 'assistant',
-		'text' => 'Ahoj, som tvoj jednoduchy chat asistent. Napis mi spravu.'
+		'text' => "Vitaj v mojom chate.\n\nSom pripraveny pomoct s navrhmi, textami alebo rychlym vysvetlenim.\n\nNapis mi, co potrebujes vyriesit ako prve."
 	];
 }
 

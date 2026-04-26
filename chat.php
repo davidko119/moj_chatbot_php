@@ -32,9 +32,9 @@ $_SESSION['messages'][] = [
 ];
 
 if (OPENAI_API_KEY === '') {
-    $odpoved = 'Spravu som prijal. Toto je lahka demo verzia bez realneho AI backendu.';
+    $odpoved = 'Dakujem za spravu. Toto je ukazkova verzia chatu bez zapnuteho AI backendu.';
 } else {
-    $odpoved = 'Spravu som prijal. OpenAI kluc je pripraveny, ale volanie API tu este nie je zapnute.';
+    $odpoved = 'Dakujem za spravu. API kluc je nacitany, ale volanie modelu este nie je zapnute.';
 }
 
 $_SESSION['messages'][] = [
