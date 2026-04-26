@@ -26,6 +26,10 @@ if ($sprava === '') {
     exit;
 }
 
+if (je_uvodny_stav_chatu($_SESSION['messages'])) {
+	$_SESSION['messages'] = [];
+}
+
 $_SESSION['messages'][] = [
     'role' => 'user',
     'text' => skrat_spravu($sprava, 1200)

@@ -5,6 +5,7 @@ require_once __DIR__ . '/functions.php';
 priprav_session_spravy();
 
 $spravy = $_SESSION['messages'];
+$jeUvodnyStav = je_uvodny_stav_chatu($spravy);
 ?>
 
 <!DOCTYPE html>
@@ -20,73 +21,66 @@ $spravy = $_SESSION['messages'];
 </head>
 <body>
     <main class="app-shell">
-        <section class="chat-panel">
-            <header class="chat-header">
-                <div class="chat-heading">
-                    <span class="logo-ikona" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7 7H17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-                            <path d="M7 12H17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-                            <path d="M7 17H13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-                            <rect x="3.5" y="3.5" width="17" height="17" rx="4" stroke="currentColor" stroke-width="1.4"/>
-                        </svg>
-                    </span>
-                    <div>
-                        <p class="chat-title">Moj chat</p>
-                        <p class="chat-subtitle">Cierny a biely styl, jednoduchy a cisty</p>
-                    </div>
+        <header class="horna-lista">
+            <div class="znacka">Moj chat</div>
+            <a class="reset-link" href="chat.php?action=reset">Novy rozhovor</a>
+        </header>
+
+        <section class="obsah" aria-live="polite">
+            <?php if ($jeUvodnyStav): ?>
+                <div class="uvod">
+                    <h1>Kde by sme mali zacat?</h1>
                 </div>
-                <a class="reset-button" href="chat.php?action=reset">Novy rozhovor</a>
-            </header>
+            <?php else: ?>
+                <div id="chat-messages" class="chat-messages">
+                    <?php foreach ($spravy as $sprava): ?>
+                        <?php $jePouzivatel = ($sprava['role'] ?? '') === 'user'; ?>
+                        <article class="message-row <?php echo $jePouzivatel ? 'message-row--user' : 'message-row--assistant'; ?>">
+                            <span class="avatar avatar--<?php echo $jePouzivatel ? 'user' : 'assistant'; ?>" aria-hidden="true">
+                                <?php if ($jePouzivatel): ?>
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.5"/>
+                                        <path d="M5.8 18.2C6.7 15.5 9.1 14 12 14C14.9 14 17.3 15.5 18.2 18.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                <?php else: ?>
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="6.2" y="6.2" width="11.6" height="11.6" rx="2.4" stroke="currentColor" stroke-width="1.5"/>
+                                        <path d="M9.3 10.1H14.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                                        <path d="M9.3 13.9H14.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                                    </svg>
+                                <?php endif; ?>
+                            </span>
+                            <div class="message-bubble <?php echo $jePouzivatel ? 'message-bubble--user' : 'message-bubble--assistant'; ?>">
+                                <p class="message-label"><?php echo $jePouzivatel ? 'Vy' : 'Asistent'; ?></p>
+                                <p class="message-text"><?php echo esc_text((string) ($sprava['text'] ?? '')); ?></p>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </section>
 
-            <div id="chat-messages" class="chat-messages" aria-live="polite">
-                <?php foreach ($spravy as $sprava): ?>
-                    <?php $jePouzivatel = ($sprava['role'] ?? '') === 'user'; ?>
-                    <article class="message-row <?php echo $jePouzivatel ? 'message-row--user' : 'message-row--assistant'; ?>">
-                        <span class="avatar avatar--<?php echo $jePouzivatel ? 'user' : 'assistant'; ?>" aria-hidden="true">
-                            <?php if ($jePouzivatel): ?>
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.5"/>
-                                    <path d="M5.8 18.2C6.7 15.5 9.1 14 12 14C14.9 14 17.3 15.5 18.2 18.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                </svg>
-                            <?php else: ?>
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="6.2" y="6.2" width="11.6" height="11.6" rx="2.4" stroke="currentColor" stroke-width="1.5"/>
-                                    <path d="M9.3 10.1H14.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-                                    <path d="M9.3 13.9H14.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-                                </svg>
-                            <?php endif; ?>
-                        </span>
-                        <div class="message-bubble <?php echo $jePouzivatel ? 'message-bubble--user' : 'message-bubble--assistant'; ?>">
-                            <p class="message-label"><?php echo $jePouzivatel ? 'Vy' : 'Asistent'; ?></p>
-                            <p class="message-text"><?php echo esc_text((string) ($sprava['text'] ?? '')); ?></p>
-                        </div>
-                    </article>
-                <?php endforeach; ?>
-            </div>
-
-            <form class="chat-form" action="chat.php" method="POST">
-                <label for="message" class="sr-only">Sprava</label>
+        <form class="chat-form" action="chat.php" method="POST">
+            <label for="message" class="sr-only">Sprava</label>
+            <div class="input-obal">
+                <span class="plus-ikona" aria-hidden="true">+</span>
                 <textarea
                     id="message"
                     name="message"
-                    rows="2"
+                    rows="1"
                     maxlength="1200"
                     required
-                    placeholder="Napiste spravu..."
+                    placeholder="Spytaj sa hocico..."
                 ></textarea>
-                <div class="chat-form__footer">
-                    <p>Enter odosle spravu, Shift+Enter prida novy riadok</p>
-                    <button type="submit">
-                        <span>Odoslat</span>
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path d="M4.5 12H18.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-                            <path d="M13.5 7L18.5 12L13.5 17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                </div>
-            </form>
-        </section>
+                <button type="submit" class="odoslat" aria-label="Odoslat spravu">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M5 12H19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        <path d="M14 7L19 12L14 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            <p class="napoveda">Enter odosle spravu, Shift+Enter prida novy riadok</p>
+        </form>
     </main>
 
     <script>
@@ -108,7 +102,9 @@ $spravy = $_SESSION['messages'];
             }
         });
 
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        if (chatMessages) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
     </script>
 </body>
 </html>

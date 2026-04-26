@@ -30,3 +30,13 @@ function skrat_spravu(string $text, int $maxDlzka = 1200): string
 	return mb_substr(trim($text), 0, $maxDlzka);
 }
 
+function je_uvodny_stav_chatu(array $spravy): bool
+{
+	if (count($spravy) !== 1) {
+		return false;
+	}
+
+	$prvaSprava = $spravy[0] ?? [];
+	return ($prvaSprava['role'] ?? '') === 'assistant';
+}
+
