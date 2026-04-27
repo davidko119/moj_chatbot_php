@@ -56,3 +56,10 @@ define('OPENAI_API_KEY', nacitaj_env_hodnotu('OPENAI_API_KEY'));
 // Predvolený model pre OpenAI volanie.
 define('OPENAI_MODEL', 'gpt-4o-mini');
 
+// Databazove nastavenia (MySQL/MariaDB) nacitane z env.
+define('DB_HOST', nacitaj_env_hodnotu('DB_HOST') !== '' ? nacitaj_env_hodnotu('DB_HOST') : '127.0.0.1');
+define('DB_PORT', nacitaj_env_hodnotu('DB_PORT') !== '' ? nacitaj_env_hodnotu('DB_PORT') : '3306');
+define('DB_NAME', nacitaj_env_hodnotu('DB_NAME'));
+define('DB_USER', nacitaj_env_hodnotu('DB_USER'));
+define('DB_PASS', nacitaj_env_hodnotu('DB_PASS'));
+

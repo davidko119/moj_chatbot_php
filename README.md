@@ -13,7 +13,7 @@ alebo zo systémovej premennej `OPENAI_API_KEY`.
 Projekt je spravený ako ľahký základ pre chatbot aplikáciu:
 - frontend je v jednom PHP view súbore
 - odosielanie správ rieši samostatný handler
-- správy sa ukladajú do `$_SESSION`
+- správy sa ukladajú do `$_SESSION` alebo do MySQL (ak je DB nakonfigurovaná)
 - UI je bez Tailwindu, iba vlastný `style.css`
 
 ## Štruktúra projektu
@@ -73,6 +73,21 @@ setx OPENAI_API_KEY "sk-...tvoj_realny_kluc..."
 ```
 
 Potom zavri a znova otvor terminál alebo server, aby sa nová premenná načítala.
+
+## Databáza (MySQL/MariaDB)
+
+Ak chceš používať databázu, nastav premenné v `.env` (alebo systémové env):
+
+```env
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_NAME=moj_chatbot
+DB_USER=root
+DB_PASS=root
+```
+
+Po pripojení sa tabuľky vytvoria automaticky. Ak má používateľ právo na vytvorenie DB,
+aplikácia sa pokúsi databázu založiť sama.
 
 ## Poznámky k ďalšiemu rozvoju
 
