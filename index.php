@@ -38,13 +38,43 @@ $jeUvodnyStav = je_uvodny_stav_chatu($spravy);
                         $chatId = (string) ($chat['id'] ?? '');
                         $nazov = (string) ($chat['title'] ?? 'Nový chat');
                         $aktivny = $chatId !== '' && $chatId === $aktivnyChatId;
+                        $jeFav = je_oblubeny_chat($chatId);
                         ?>
-                        <a
-                            class="sidebar-chat-link <?php echo $aktivny ? 'sidebar-chat-link--active' : ''; ?>"
-                            href="chat.php?action=switch&amp;id=<?php echo rawurlencode($chatId); ?>"
-                        >
-                            <span class="sidebar-chat-title"><?php echo esc_text($nazov); ?></span>
-                        </a>
+                        <div class="sidebar-chat-item">
+                            <a
+                                class="sidebar-chat-link <?php echo $aktivny ? 'sidebar-chat-link--active' : ''; ?>"
+                                href="chat.php?action=switch&amp;id=<?php echo rawurlencode($chatId); ?>"
+                            >
+                                <span class="sidebar-chat-title"><?php echo esc_text($nazov); ?></span>
+                            </a>
+                            <div class="sidebar-chat-actions">
+                                <button
+                                    class="chat-action-btn chat-favorite-btn <?php echo $jeFav ? 'chat-favorite-btn--active' : ''; ?>"
+                                    data-chat-id="<?php echo rawurlencode($chatId); ?>"
+                                    title="<?php echo $jeFav ? 'Odstrániť z obľúbených' : 'Pridať do obľúbených'; ?>"
+                                    aria-label="<?php echo $jeFav ? 'Odstrániť z obľúbených' : 'Pridať do obľúbených'; ?>"
+                                >
+                                    ★
+                                </button>
+                                <button
+                                    class="chat-action-btn chat-rename-btn"
+                                    data-chat-id="<?php echo rawurlencode($chatId); ?>"
+                                    data-chat-title="<?php echo esc_text($nazov); ?>"
+                                    title="Premenovať chat"
+                                    aria-label="Premenovať chat"
+                                >
+                                    ✎
+                                </button>
+                                <button
+                                    class="chat-action-btn chat-delete-btn"
+                                    data-chat-id="<?php echo rawurlencode($chatId); ?>"
+                                    title="Zmazať chat"
+                                    aria-label="Zmazať chat"
+                                >
+                                    🗑
+                                </button>
+                            </div>
+                        </div>
                     <?php endforeach; ?>
                 </div>
             </aside>
@@ -278,6 +308,97 @@ $jeUvodnyStav = je_uvodny_stav_chatu($spravy);
         if (chatMessages) {
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
+
+        // Favorite chat action
+        document.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('chat-favorite-btn')) {
+                const btn = e.target;
+                const chatId = btn.dataset.chatId;
+                if (!chatId) return;
+
+                try {
+                    const response = await fetch(`chat.php?action=favorite&id=${encodeURIComponent(chatId)}&ajax=1`);
+                    const data = await response.json();
+                    if (data.ok) {
+                        btn.classList.toggle('chat-favorite-btn--active');
+                        btn.title = data.is_favorite ? 'Odstrániť z obľúbených' : 'Pridať do obľúbených';
+                        btn.setAttribute('aria-label', btn.title);
+                    }
+                } catch (error) {
+                    alert('Nepodarilo sa zmeniť obľúbené');
+                }
+            }
+        });
+
+        // Delete chat action
+        document.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('chat-delete-btn')) {
+                const btn = e.target;
+                const chatId = btn.dataset.chatId;
+                if (!chatId) return;
+
+                if (!confirm('Naozaj chceš zmazať tento chat? Túto akciu nebude možné vrátiť.')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`chat.php?action=delete&id=${encodeURIComponent(chatId)}&ajax=1`);
+                    const data = await response.json();
+                    if (data.ok) {
+                        // Reload page to reflect deletion
+                        window.location.reload();
+                    } else {
+                        alert('Nepodarilo sa zmazať chat');
+                    }
+                } catch (error) {
+                    alert('Nepodarilo sa zmazať chat');
+                }
+            }
+        });
+
+        // Rename chat action
+        document.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('chat-rename-btn')) {
+                const btn = e.target;
+                const chatId = btn.dataset.chatId;
+                const currentTitle = btn.dataset.chatTitle;
+                if (!chatId) return;
+
+                const novyNazov = prompt('Nový názov chatu:', currentTitle);
+                if (novyNazov === null || novyNazov.trim() === '') {
+                    return; // User cancelled or empty
+                }
+
+                try {
+                    const formData = new FormData();
+                    formData.append('action', 'rename');
+                    formData.append('id', chatId);
+                    formData.append('title', novyNazov.trim());
+
+                    const response = await fetch('chat.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    if (data.ok) {
+                        // Update the title in the sidebar
+                        const chatItem = btn.closest('.sidebar-chat-item');
+                        if (chatItem) {
+                            const titleSpan = chatItem.querySelector('.sidebar-chat-title');
+                            if (titleSpan) {
+                                titleSpan.textContent = novyNazov.trim();
+                            }
+                            btn.dataset.chatTitle = novyNazov.trim();
+                        }
+                    } else {
+                        alert('Nepodarilo sa premenovať chat');
+                    }
+                } catch (error) {
+                    alert('Nepodarilo sa premenovať chat');
+                }
+            }
+        });
     </script>
 </body>
 </html>

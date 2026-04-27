@@ -164,6 +164,49 @@ if (isset($_GET['action']) && $_GET['action'] === 'switch') {
     exit;
 }
 
+if (isset($_GET['action']) && $_GET['action'] === 'delete') {
+    $chatId = trim((string) ($_GET['id'] ?? ''));
+    if ($chatId !== '') {
+        $isAjax = (($_GET['ajax'] ?? '') === '1') || (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'fetch');
+        $success = zmaz_chat($chatId);
+        if ($isAjax) {
+            posli_json(['ok' => $success, 'message' => $success ? 'Chat bol zmazaný' : 'Nepodarilo sa zmazať chat']);
+        }
+    }
+
+    header('Location: index.php');
+    exit;
+}
+
+if (isset($_GET['action']) && $_GET['action'] === 'favorite') {
+    $chatId = trim((string) ($_GET['id'] ?? ''));
+    if ($chatId !== '') {
+        $isAjax = (($_GET['ajax'] ?? '') === '1') || (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'fetch');
+        $isFavorite = je_oblubeny_chat($chatId);
+        if ($isFavorite) {
+            $success = odeber_z_oblubeneho($chatId);
+        } else {
+            $success = pridas_do_oblubeneho($chatId);
+        }
+        if ($isAjax) {
+            posli_json(['ok' => $success, 'is_favorite' => je_oblubeny_chat($chatId)]);
+        }
+    }
+
+    header('Location: index.php');
+    exit;
+}
+
+if (isset($_POST['action']) && $_POST['action'] === 'rename') {
+    $chatId = trim((string) ($_POST['id'] ?? ''));
+    $novyNazov = trim((string) ($_POST['title'] ?? ''));
+    if ($chatId !== '' && $novyNazov !== '') {
+        $success = premenuj_chat($chatId, $novyNazov);
+        posli_json(['ok' => $success, 'message' => $success ? 'Chat bol premenovaný' : 'Nepodarilo sa premenovať chat']);
+    }
+    posli_json(['ok' => false, 'error' => 'Chýbajú parametre']);
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: index.php');
     exit;

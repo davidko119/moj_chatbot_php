@@ -211,3 +211,103 @@ function je_uvodny_stav_chatu(array $spravy): bool
 	return ($prvaSprava['role'] ?? '') === 'assistant';
 }
 
+function zmaz_chat(string $chatId): bool
+{
+	priprav_session_spravy();
+
+	$index = -1;
+	foreach ($_SESSION['chats'] as $i => $chat) {
+		if ((string) ($chat['id'] ?? '') === $chatId) {
+			$index = $i;
+			break;
+		}
+	}
+
+	if ($index === -1) {
+		return false;
+	}
+
+	// Ak mazeme aktivny chat, prepni na prvý dostupný
+	$aktualnyId = (string) ($_SESSION['current_chat_id'] ?? '');
+	if ($aktualnyId === $chatId) {
+		unset($_SESSION['chats'][$index]);
+		$_SESSION['chats'] = array_values($_SESSION['chats']);
+
+		if (count($_SESSION['chats']) > 0) {
+			$_SESSION['current_chat_id'] = (string) ($_SESSION['chats'][0]['id'] ?? '');
+			$_SESSION['messages'] = (array) ($_SESSION['chats'][0]['messages'] ?? []);
+		} else {
+			$novyChat = vytvor_chat_zaznam();
+			$_SESSION['chats'] = [$novyChat];
+			$_SESSION['current_chat_id'] = (string) $novyChat['id'];
+			$_SESSION['messages'] = $novyChat['messages'];
+		}
+	} else {
+		unset($_SESSION['chats'][$index]);
+		$_SESSION['chats'] = array_values($_SESSION['chats']);
+	}
+
+	return true;
+}
+
+function premenuj_chat(string $chatId, string $novyNazov): bool
+{
+	priprav_session_spravy();
+
+	$novyNazov = skrat_spravu($novyNazov, 100);
+	if ($novyNazov === '') {
+		return false;
+	}
+
+	foreach ($_SESSION['chats'] as &$chat) {
+		if ((string) ($chat['id'] ?? '') === $chatId) {
+			$chat['title'] = $novyNazov;
+			$chat['updated_at'] = time();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function pridas_do_oblubeneho(string $chatId): bool
+{
+	priprav_session_spravy();
+
+	foreach ($_SESSION['chats'] as &$chat) {
+		if ((string) ($chat['id'] ?? '') === $chatId) {
+			$chat['is_favorite'] = true;
+			$chat['updated_at'] = time();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function odeber_z_oblubeneho(string $chatId): bool
+{
+	priprav_session_spravy();
+
+	foreach ($_SESSION['chats'] as &$chat) {
+		if ((string) ($chat['id'] ?? '') === $chatId) {
+			$chat['is_favorite'] = false;
+			$chat['updated_at'] = time();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function je_oblubeny_chat(string $chatId): bool
+{
+	foreach ($_SESSION['chats'] as $chat) {
+		if ((string) ($chat['id'] ?? '') === $chatId) {
+			return (bool) ($chat['is_favorite'] ?? false);
+		}
+	}
+
+	return false;
+}
+
