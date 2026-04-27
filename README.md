@@ -2,6 +2,12 @@
 
 Jednoduchy PHP chat so session pamatou a vlastnym minimalistickym dizajnom.
 
+## GitHub popis projektu
+
+Lahky PHP chatbot starter s ukladanim konverzacie do `$_SESSION`.
+Podporuje lokalne nacitanie OpenAI kluca zo suboru `.env` (bezpecne mimo gitu)
+alebo zo systemovej premennej `OPENAI_API_KEY`.
+
 ## O projekte
 
 Projekt je spraveny ako lahky zaklad pre chatbot aplikaciu:
