@@ -1,62 +1,62 @@
 # Môj Chatbot PHP
 
-Jednoduchy PHP chat so session pamatou a vlastnym minimalistickym dizajnom.
+Jednoduchý PHP chat so session pamäťou a vlastným minimalistickým dizajnom.
 
 ## GitHub popis projektu
 
-Lahky PHP chatbot starter s ukladanim konverzacie do `$_SESSION`.
-Podporuje lokalne nacitanie OpenAI kluca zo suboru `.env` (bezpecne mimo gitu)
-alebo zo systemovej premennej `OPENAI_API_KEY`.
+Ľahký PHP chatbot starter s ukladaním konverzácie do `$_SESSION`.
+Podporuje lokálne načítanie OpenAI kľúča zo súboru `.env` (bezpečne mimo gitu)
+alebo zo systémovej premennej `OPENAI_API_KEY`.
 
 ## O projekte
 
-Projekt je spraveny ako lahky zaklad pre chatbot aplikaciu:
-- frontend je v jednom PHP view subore
-- odosielanie sprav riesi samostatny handler
-- spravy sa ukladaju do `$_SESSION`
-- UI je bez Tailwindu, iba vlastny `style.css`
+Projekt je spravený ako ľahký základ pre chatbot aplikáciu:
+- frontend je v jednom PHP view súbore
+- odosielanie správ rieši samostatný handler
+- správy sa ukladajú do `$_SESSION`
+- UI je bez Tailwindu, iba vlastný `style.css`
 
-## Struktura projektu
+## Štruktúra projektu
 
 - `index.php`
-  - hlavna stranka chatu
-  - zobrazenie historie sprav zo session
-  - formular pre odoslanie spravy
-  - male JS na auto-resize textarea a odoslanie Enterom
+  - hlavná stránka chatu
+  - zobrazenie histórie správ zo session
+  - formulár pre odoslanie správy
+  - malé JS na auto-resize textarea a odoslanie Enterom
 
 - `chat.php`
   - backend handler pre chat akcie
-  - prijima `POST` spravy
-  - uklada user/assistant spravy do session
-  - podporuje reset konverzacie cez `?action=reset`
+  - prijíma `POST` správy
+  - ukladá user/assistant správy do session
+  - podporuje reset konverzácie cez `?action=reset`
 
 - `config.php`
-  - nacitanie API kluca zo systemovej premennej alebo zo suboru `.env`
+  - načítanie API kľúča zo systémovej premennej alebo zo súboru `.env`
 
 - `.env`
-  - lokalny subor pre vlastny `OPENAI_API_KEY` (je ignorovany v gite)
+  - lokálny súbor pre vlastný `OPENAI_API_KEY` (je ignorovaný v gite)
 
 - `.env.example`
-  - ukazkovy format env pre GitHub
+  - ukážkový formát env pre GitHub
 
 - `functions.php`
-  - pomocne funkcie projektu
+  - pomocné funkcie projektu
 
 - `style.css`
-  - vlastne styly pre jednoduchy a cisty layout
+  - vlastné štýly pre jednoduchý a čistý layout
 
-## Ako spustit lokalne
+## Ako spustiť lokálne
 
-1. Projekt nechaj v `htdocs` (MAMP/XAMPP alebo iny PHP server)
-2. Spusti lokalny server
-3. Otvor v prehliadaci:
+1. Projekt nechaj v `htdocs` (MAMP/XAMPP alebo iný PHP server)
+2. Spusti lokálny server
+3. Otvor v prehliadači:
    - `http://localhost/my_database/moj_chatbot_php/`
 
-## Nastavenie OpenAI API kluca
+## Nastavenie OpenAI API kľúča
 
-Mas dve moznosti, projekt pouzije najprv systemovu premennu a potom `.env`.
+Máš dve možnosti, projekt použije najprv systémovú premennú a potom `.env`.
 
-### Moznost 1: .env subor (odporucane)
+### Možnosť 1: .env súbor (odporúčané)
 
 Do `.env` daj:
 
@@ -64,18 +64,18 @@ Do `.env` daj:
 OPENAI_API_KEY=sk-...tvoj_realny_kluc...
 ```
 
-Subor `.env` je v `.gitignore`, takze sa neposle na GitHub.
+Súbor `.env` je v `.gitignore`, takže sa nepošle na GitHub.
 
-### Moznost 2: systemova premenna vo Windows
+### Možnosť 2: systémová premenná vo Windows
 
 ```powershell
 setx OPENAI_API_KEY "sk-...tvoj_realny_kluc..."
 ```
 
-Potom zavri a znova otvor terminal alebo server, aby sa nova premenna nacitala.
+Potom zavri a znova otvor terminál alebo server, aby sa nová premenná načítala.
 
-## Poznamky k dalsiemu rozvoju
+## Poznámky k ďalšiemu rozvoju
 
-- napojit realny AI backend (OpenAI alebo ine API)
-- doplnit validacie a logovanie
-- pridat testy pre backend cast
+- napojiť reálny AI backend (OpenAI alebo iné API)
+- doplniť validácie a logovanie
+- pridať testy pre backend časť
