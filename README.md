@@ -1,4 +1,4 @@
-# Moj Chatbot PHP
+# Môj Chatbot PHP
 
 Jednoduchy PHP chat so session pamatou a vlastnym minimalistickym dizajnom.
 
