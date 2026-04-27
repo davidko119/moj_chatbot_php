@@ -53,6 +53,6 @@ function nacitaj_env_hodnotu(string $key): string
 // API kluc sa cita najprv zo systemovej premennej a potom z .env suboru.
 define('OPENAI_API_KEY', nacitaj_env_hodnotu('OPENAI_API_KEY'));
 
-// Predvoleny model pre buduce napojenie API.
-define('OPENAI_MODEL', 'gpt-4.1-mini');
+// Predvolený model pre OpenAI volanie.
+define('OPENAI_MODEL', 'gpt-4o-mini');
 
