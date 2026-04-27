@@ -25,7 +25,13 @@ Projekt je spraveny ako lahky zaklad pre chatbot aplikaciu:
   - podporuje reset konverzacie cez `?action=reset`
 
 - `config.php`
-  - priprava na buduci API kluc a nastavenia
+  - nacitanie API kluca zo systemovej premennej alebo zo suboru `.env`
+
+- `.env`
+  - lokalny subor pre vlastny `OPENAI_API_KEY` (je ignorovany v gite)
+
+- `.env.example`
+  - ukazkovy format env pre GitHub
 
 - `functions.php`
   - pomocne funkcie projektu
@@ -40,11 +46,21 @@ Projekt je spraveny ako lahky zaklad pre chatbot aplikaciu:
 3. Otvor v prehliadaci:
    - `http://localhost/my_database/moj_chatbot_php/`
 
-## Poznamka k API klucu
+## Nastavenie OpenAI API kluca
 
-Projekt cita kluc z premennej prostredia `OPENAI_API_KEY` v `config.php`.
+Mas dve moznosti, projekt pouzije najprv systemovu premennu a potom `.env`.
 
-PowerShell (Windows):
+### Moznost 1: .env subor (odporucane)
+
+Do `.env` daj:
+
+```env
+OPENAI_API_KEY=sk-...tvoj_realny_kluc...
+```
+
+Subor `.env` je v `.gitignore`, takze sa neposle na GitHub.
+
+### Moznost 2: systemova premenna vo Windows
 
 ```powershell
 setx OPENAI_API_KEY "sk-...tvoj_realny_kluc..."
