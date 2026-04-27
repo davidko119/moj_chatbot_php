@@ -1,5 +1,15 @@
 <?php
 
+require_once __DIR__ . '/config.php';
+
+if (!defined('DB_NAME')) {
+	define('DB_HOST', '127.0.0.1');
+	define('DB_PORT', '3306');
+	define('DB_NAME', '');
+	define('DB_USER', '');
+	define('DB_PASS', '');
+}
+
 function esc_text(string $hodnota): string
 {
 	return htmlspecialchars($hodnota, ENT_QUOTES, 'UTF-8');
